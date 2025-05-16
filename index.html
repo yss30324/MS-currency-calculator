@@ -4,18 +4,20 @@
   <meta charset="UTF-8">
   <title>遊戲幣值計算機</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .row { display: flex; margin-bottom: 10px; }
-    .label { width: 100px; line-height: 32px; }
+    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    .row { display: flex; align-items: center; margin-bottom: 10px; }
+    .label { width: 100px; }
     input { flex: 1; padding: 5px; }
-    #warning { color: red; font-weight: bold; margin-bottom: 20px; }
     .section { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px; }
+    #warning { color: red; font-weight: bold; margin-bottom: 20px; }
+    span { margin: 0 5px; }
   </style>
 </head>
 <body>
   <h1>遊戲幣值計算機</h1>
   <div id="warning">請輸入雪花價格</div>
 
+  <!-- 上半部：計算區 -->
   <div class="row">
     <div class="label">NTD</div>
     <input type="number" id="ntd" oninput="fromInput('ntd')">
@@ -33,27 +35,45 @@
     <input type="number" id="meso" oninput="fromInput('meso')">
   </div>
 
+  <!-- 下半部：幣值設定 -->
   <div class="section">
     <h2>幣值設定</h2>
+
     <div class="row">
       <div class="label">NTD : WC</div>
-      <input type="number" id="rate_ntd_wc" value="120" oninput="update()">
+      <input type="number" id="rate_ntd_left" value="120" oninput="update()">
+      <span>:</span>
+      <input type="number" id="rate_ntd_right" value="800" oninput="update()">
     </div>
+
     <div class="row">
       <div class="label">WC : 雪花</div>
-      <input type="number" id="rate_wc_snow" value="300" oninput="update()">
+      <input type="number" id="rate_wc_left" value="300" oninput="update()">
+      <span>:</span>
+      <input type="number" id="rate_wc_right" value="11" oninput="update()">
     </div>
+
     <div class="row">
       <div class="label">雪花 : 楓幣</div>
-      <input type="number" id="rate_snow_meso" placeholder="請輸入" oninput="update()">
+      <input type="number" id="rate_snow_left" value="1" oninput="update()">
+      <span>:</span>
+      <input type="number" id="rate_snow_right" placeholder="請輸入" oninput="update()">
     </div>
   </div>
 
   <script>
     function getRates() {
-      const ntdPerWC = parseFloat(document.getElementById('rate_ntd_wc').value) || 120;
-      const wcPerSnow = parseFloat(document.getElementById('rate_wc_snow').value) || 300 / 11;
-      const snowPerMeso = parseFloat(document.getElementById('rate_snow_meso').value);
+      const ntd_left = parseFloat(document.getElementById('rate_ntd_left').value) || 120;
+      const ntd_right = parseFloat(document.getElementById('rate_ntd_right').value) || 800;
+      const wc_left = parseFloat(document.getElementById('rate_wc_left').value) || 300;
+      const wc_right = parseFloat(document.getElementById('rate_wc_right').value) || 11;
+      const snow_left = parseFloat(document.getElementById('rate_snow_left').value) || 1;
+      const snow_right = parseFloat(document.getElementById('rate_snow_right').value);
+
+      const ntdPerWC = ntd_left / ntd_right;
+      const wcPerSnow = wc_left / wc_right;
+      const snowPerMeso = snow_right ? (snow_right / snow_left) : null;
+
       return { ntdPerWC, wcPerSnow, snowPerMeso };
     }
 
@@ -76,32 +96,32 @@
       if (source === 'ntd') {
         value = parseFloat(ntd.value);
         if (isNaN(value)) return;
-        wc.value = value / ntdPerWC * 800;
-        snow.value = wc.value / wcPerSnow * 11;
+        wc.value = value / ntdPerWC;
+        snow.value = wc.value / wcPerSnow;
         meso.value = snow.value * snowPerMeso;
       } else if (source === 'wc') {
         value = parseFloat(wc.value);
         if (isNaN(value)) return;
-        ntd.value = value / 800 * ntdPerWC;
-        snow.value = value / wcPerSnow * 11;
+        ntd.value = value * ntdPerWC;
+        snow.value = value / wcPerSnow;
         meso.value = snow.value * snowPerMeso;
       } else if (source === 'snow') {
         value = parseFloat(snow.value);
         if (isNaN(value)) return;
-        wc.value = value * wcPerSnow / 11;
-        ntd.value = wc.value / 800 * ntdPerWC;
+        wc.value = value * wcPerSnow;
+        ntd.value = wc.value * ntdPerWC;
         meso.value = value * snowPerMeso;
       } else if (source === 'meso') {
         value = parseFloat(meso.value);
         if (isNaN(value)) return;
         snow.value = value / snowPerMeso;
-        wc.value = snow.value * wcPerSnow / 11;
-        ntd.value = wc.value / 800 * ntdPerWC;
+        wc.value = snow.value * wcPerSnow;
+        ntd.value = wc.value * ntdPerWC;
       }
     }
 
     function update() {
-      fromInput('ntd'); // 更新目前資料
+      fromInput('ntd'); // Refresh values if rates changed
     }
   </script>
 </body>
