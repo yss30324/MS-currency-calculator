@@ -8,36 +8,28 @@
     body {
       font-family: sans-serif;
       padding: 20px;
+      max-width: 500px;
       margin: auto;
-      max-width: 600px;
+      font-size: 1rem;
     }
 
     .row {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .label {
-      width: 100%;
-      max-width: 100px;
-      margin-right: 10px;
+      width: 100px;
+      font-size: 1rem;
     }
 
     input {
-      flex: 1 1 100px;
-      min-width: 100px;
-      padding: 5px;
-      margin-bottom: 5px;
-    }
-
-    .rate-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      align-items: center;
-      width: 100%;
+      flex: 1;
+      min-width: 120px;
+      padding: 6px;
+      font-size: 1rem;
     }
 
     .section {
@@ -50,27 +42,30 @@
       color: red;
       font-weight: bold;
       margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    span {
+      margin: 0 5px;
+      font-size: 1rem;
     }
 
     @media (max-width: 500px) {
+      body {
+        font-size: 0.95rem;
+      }
       .row {
         flex-direction: column;
         align-items: flex-start;
       }
-
-      .rate-group {
-        flex-direction: column;
-        align-items: stretch;
+      .label {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+      input {
+        width: 100%;
+        margin-bottom: 5px;
       }
     }
   </style>
 </head>
-<body>
-  <h1>遊戲幣值計算機</h1>
-  <div id="warning">請輸入雪花價格</div>
-
-  <!-- 上半部：計算 -->
-  <div class="row"><div class="label">NTD</div><input type="number" id="ntd" oninput="fromInput('ntd')"></div>
-  <div class="row"><div class="label">WC</div><input type="number" id="wc" oninput="fromInput('wc')"></div>
-  <div class="row"><div class="label">雪花</div><input type="number" id="snow" oninput="fromInput('snow')"></div>
-  <div class="row"><div class="label">楓幣</div><input type="number" id="meso" oninput="fromInput('meso')"></
